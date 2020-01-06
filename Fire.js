@@ -1,10 +1,10 @@
-import FirebaseKeys from "./config";
+import firebaseConfig from "./config";
 import firebase from "firebase";
 require("firebase/firestore");
 
 class Fire {
     constructor() {
-        firebase.initializeApp(FirebaseKeys);
+        firebase.initializeApp(firebaseConfig);
     }
 
     addPost = async ({ text, localUri }) => {

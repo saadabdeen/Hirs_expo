@@ -6,61 +6,84 @@ import moment from "moment";
 import Fire from "../Fire";
 
 // temporary data until we pull from Firebase
-posts = [
-    {
-        id: "ReMIJ1qOFkUJvom4nDbWZcorp552",
-        name: "Joe McKay",
-        text:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        timestamp: 1569109273726,
-        avatar: require("../assets/tempAvatar.jpg"),
-        image: require("../assets/tempImage1.jpg")
-    },
-    {
-        id: "2",
-        name: "Karyn Kim",
-        text:
-            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        timestamp: 1569109273726,
-        avatar: require("../assets/tempAvatar.jpg"),
-        image: require("../assets/tempImage2.jpg")
-    },
-    {
-        id: "3",
-        name: "Emerson Parsons",
-        text:
-            "Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. Vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant.",
-        timestamp: 1569109273726,
-        avatar: require("../assets/tempAvatar.jpg"),
-        image: require("../assets/tempImage3.jpg")
-    },
-    {
-        id: "4",
-        name: "Kathie Malone",
-        text:
-            "At varius vel pharetra vel turpis nunc eget lorem. Lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor. Adipiscing tristique risus nec feugiat in fermentum.",
-        timestamp: 1569109273726,
-        avatar: require("../assets/tempAvatar.jpg"),
-        image: require("../assets/tempImage4.jpg")
-    }
-];
-
+// posts = [
+//     {
+//         id: "ReMIJ1qOFkUJvom4nDbWZcorp552",
+//         name: "Joe McKay",
+//         text:
+//             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+//         timestamp: 1569109273726,
+//         avatar: require("../assets/tempAvatar.jpg"),
+//         image: require("../assets/tempImage1.jpg")
+//     },
+//     {
+//         id: "2",
+//         name: "Karyn Kim",
+//         text:
+//             "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+//         timestamp: 1569109273726,
+//         avatar: require("../assets/tempAvatar.jpg"),
+//         image: require("../assets/tempImage2.jpg")
+//     },
+//     {
+//         id: "3",
+//         name: "Emerson Parsons",
+//         text:
+//             "Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. Vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant.",
+//         timestamp: 1569109273726,
+//         avatar: require("../assets/tempAvatar.jpg"),
+//         image: require("../assets/tempImage3.jpg")
+//     },
+//     {
+//         id: "4",
+//         name: "Kathie Malone",
+//         text:
+//             "At varius vel pharetra vel turpis nunc eget lorem. Lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor. Adipiscing tristique risus nec feugiat in fermentum.",
+//         timestamp: 1569109273726,
+//         avatar: require("../assets/tempAvatar.jpg"),
+//         image: require("../assets/tempImage4.jpg")
+//     }
+// ];
 export default class HomeScreen extends React.Component {
+    state = { posts: [] }
+    
+    componentDidMount() {
+        this.getAddLists();        
+         
+    }
+    getAddLists(){
+        firebase.firestore().collection("posts")
+        .get()
+        .then((querySnapshot) => {
+             
+            querySnapshot.forEach((doc) => {
+                this.setState({ //the error happens here
+                    // posts: [doc.data()]
+                    posts: [...this.state.posts, doc.data() ]
+                });
+                console.log(doc.data());
+            });
+            
+        })
+        .catch(function(error) {
+            console.log("Error getting documents: ", error);
+        });
+    } 
     renderPost = post => {
         return (
             <View style={styles.feedItem}>
-                <Image source={post.image} style={styles.avatar} />
+                <Image source={{ uri: post.image }} style={styles.avatar} />
                 <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <View>
-                            <Text style={styles.name}>{post.name}</Text>
-                            <Text style={styles.timestamp}>{moment(post.timestamp).fromNow()}</Text>
+                            <Text style={styles.name}>{post.text}</Text>
+                            {/* <Text style={styles.timestamp}>{moment(post.timestamp).fromNow()}</Text> */}
                         </View>
 
                         <Ionicons name="ios-more" size={24} color="#73788B" />
                     </View>
                     <Text style={styles.post}>{post.text}</Text>
-                    <Image source={post.image} style={styles.postImage} resizeMode="cover" />
+                    <Image source={{ uri: post.image }} style={styles.postImage} resizeMode="cover" />
                     <View style={{ flexDirection: "row" }}>
                         <Ionicons name="ios-heart-empty" size={24} color="#73788B" style={{ marginRight: 16 }} />
                         <Ionicons name="ios-chatboxes" size={24} color="#73788B" />
@@ -76,10 +99,10 @@ export default class HomeScreen extends React.Component {
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>Home</Text>
                 </View>
-
+                {console.log(this.state.posts)}
                 <FlatList
                     style={styles.feed}
-                     data={posts}
+                    data={this.state.posts}
                     renderItem={({ item }) => this.renderPost(item)}
                     keyExtractor={item => item.id}
                     showsVerticalScrollIndicator={false}
