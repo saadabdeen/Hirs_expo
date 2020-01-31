@@ -1,48 +1,60 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, TextInput, Image,StatusBar,ScrollView,} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Rating, AirbnbRating } from 'react-native-elements';
 import Fire from "../Fire";
 import * as ImagePicker from "expo-image-picker";
 import UserPermissions from "../utilities/UserPermissions";
-
-export default class PostAdScreen extends React.Component {
+let ratting = 0;
+export default class PostReview extends React.Component {
+    static navigationOptions = {
+        header: null
+    }
     state = {
-        itemName: "",
-        rentPrice: "",
-        rentBasis: "",
-        description: "",
-        contactNum: "",
-        image: null
+       
+        rating:null,  // For Review
+        reviewerName: "",
+        comment: "",
     };
+    ratingCompleted(rating) {
+        // console.log('ratting completed'+ rating)
+        // this.setState({
+        //     rating:rating
+        // })
+        ratting=rating;
+      }
+    
     
     componentDidMount() {
         UserPermissions.getCameraPermission;
     }
 
-    handlePost = () => {
+    handleReview = () => {
+         
         Fire.shared
-            .addPost({ itemName: this.state.itemName, rentPrice: this.state.rentPrice, rentBasis: this.state.rentBasis, description: this.state.description.trim(), contactNum: this.state.contactNum,
-                 localUri: this.state.image })
+            .addReview({ rating: ratting, reviewerName: this.state.reviewerName, comment: this.state.comment, 
+                  })
             .then(ref => {
-                this.setState({ itemName: "", rentPrice: "", rentBasis: "", description: "", contactNum: "", image: null });
-                this.props.navigation.goBack();
+                this.setState({ rating: null, reviewerName: "", comment: ""});
+                this.props.navigation.navigate('ShowReview');
+                console.log(this.state);
             })
             .catch(error => {
                 alert(error);
             });
     };
 
-    pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3]
-        });
+    // pickImage = async () => {
+    //     let result = await ImagePicker.launchImageLibraryAsync({
+    //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //         allowsEditing: true,
+    //         aspect: [4, 3]
+    //     });
 
-        if (!result.cancelled) {
-            this.setState({ image: result.uri });
-        }
-    };
+    //     if (!result.cancelled) {
+    //         this.setState({ image: result.uri });
+    //     }
+    // };
 
 //     render() {
 //         return (
@@ -122,12 +134,12 @@ export default class PostAdScreen extends React.Component {
 render() {
         return (
             <View>
-                    <View style={{ alignItems: "center", marginTop: 25}}>
-                    <Text style={styles.greeting}>{`Choose Picture\nfrom Camera Roll`}</Text>
-                    <TouchableOpacity style={styles.avatarPlaceholder} onPress={this.pickImage}>
-                        <Image source={{ uri: this.state.image }} style={styles.avatar}  />
+                    <View style={{ alignItems: "center", marginTop: -5}}>
+                    <Text style={styles.greeting}>{`POST A REVIEW`}</Text>
+                    <TouchableOpacity style={styles.avatarPlaceholder} >
+                        <Image style={styles.avatar}  />
                         <Ionicons
-                            name="ios-add"
+                            name="today"
                             size={40}
                             color="#FFF"
                             style={{ marginTop: 18, marginLeft: 30 }}
@@ -140,73 +152,40 @@ render() {
                 </View>
                 <ScrollView>
                 <View style={styles.form} >
+                <Rating style={{marginTop: 20 }}
+                showRating = {false}
+                onFinishRating={this.ratingCompleted} 
+                imageSize={18}/>
                     <View>
                         {/* <Text style={styles.inputTitle}>Full Name</Text> */}
                         <TextInput
-                            placeholder="Item Name"
+                            placeholder="Name"
                             style={styles.input}
-                            onChangeText={itemName => this.setState({ itemName })}
-                            value={this.state.itemName}
+                            onChangeText={reviewerName => this.setState({ reviewerName })}
+                            value={this.state.reviewerName}
                         ></TextInput>
                     </View>
 
                     <View style={{ marginTop: 15}}>
                         {/* <Text style={styles.inputTitle}>Email Address</Text> */}
                         <TextInput
-                            placeholder="Set Rent Price"
+                            placeholder="Comment"
                             style={styles.input}
-                            onChangeText={rentPrice => this.setState({ rentPrice })}
+                            onChangeText={comment => this.setState({ comment })}
                             value={this.state.rentPrice}
-                            keyboardType="numeric"
-                        ></TextInput>
-                    </View>
-
-                     <View style={{ marginTop: 15 }}>
-                        {/* <Text style={styles.inputTitle}>Mobile Number</Text> */}
-                        <TextInput
-                            placeholder="Rent Basis Daily / Weekly / Monthly"
-                            style={styles.input}
-                            onChangeText={rentBasis => this.setState({ rentBasis })}
-                            value={this.state.rentBasis}
                             autoCapitalize="none"
-                        
-                        ></TextInput>
-                    </View>
-
-                    <View style={{ marginTop: 15 }}>
-                        {/* <Text style={styles.inputTitle}>Password</Text> */}
-                        <TextInput
-                        placeholder="Description"
-                            style={styles.input}
-                            onChangeText={description => this.setState({ description })}
-                            value={this.state.description}
-                            autoCapitalize="none"
-                            
-                        ></TextInput>
-                    </View>
-
-                    <View style={{ marginTop: 15 }}>
-                        {/* <Text style={styles.inputTitle}>Password</Text> */}
-                        <TextInput
-                        placeholder="Contact Number"
-                            style={styles.input}
-                            onChangeText={contactNum => this.setState({ contactNum })}
-                            value={this.state.contactNum}
-                            keyboardType="numeric"
-                            
                         ></TextInput>
                     </View>
                 </View>
                 </ScrollView>
                 <View >
-                <TouchableOpacity style={styles.button}  onPress={this.handlePost}>
+                <TouchableOpacity style={styles.button}  onPress={this.handleReview}>
                     <Text style={{ color: "#FFF", fontWeight: "200" }}>Post</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={{ alignSelf: "center", marginTop: 35 }}
-                    onPress={() => this.props.navigation.goBack()}
-                >
+                    onPress={() => this.props.navigation.navigate('Profile')}>
                     <Text style={{ color: "#E9446A", fontSize: 13, bottom: 10}}>
                         Skip
                     </Text>

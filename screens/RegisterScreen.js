@@ -16,6 +16,7 @@ export default class RegisterScreen extends React.Component {
             email: "",
             mobile: "",
             password: "",
+            address: "",
             avatar: null
         },
         errorMessage: null
@@ -99,8 +100,19 @@ export default class RegisterScreen extends React.Component {
                             placeholder="Mobile Number"
                             style={styles.input}
                             autoCapitalize="none"
-                            onChangeText={email => this.setState({ user: { ...this.state.user, email } })}
-                            value={this.state.user.email}
+                            onChangeText={mobile => this.setState({ user: { ...this.state.user, mobile } })}
+                            value={this.state.user.mobile}
+                        ></TextInput>
+                    </View>
+
+                    <View style={{ marginTop: 32 }}>
+                        {/* <Text style={styles.inputTitle}>Mobile Number</Text> */}
+                        <TextInput
+                            placeholder="Address"
+                            style={styles.input}
+                            autoCapitalize="none"
+                            onChangeText={address => this.setState({ user: { ...this.state.user, address } })}
+                            value={this.state.user.address}
                         ></TextInput>
                     </View>
 

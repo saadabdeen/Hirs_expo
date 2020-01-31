@@ -13,7 +13,8 @@ import PostAdScreen from "./screens/PostAdScreen";
 import MyAdScreen from "./screens/MyAdScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-
+import PostReview from "./screens/PostReview";
+import ReviewsScreen from "./screens/ReviewsScreen";
 const AppContainer = createStackNavigator(
     {
         default: createBottomTabNavigator(
@@ -43,8 +44,8 @@ const AppContainer = createStackNavigator(
                         tabBarIcon: ({ tintColor }) => <Ionicons name="logo-buffer" size={24} color={tintColor} />
                     }
                 },
-                // Notification: {
-                //     screen: NotificationScreen,
+                // Review: {
+                //     screen: PostReview,
                 //     navigationOptions: {
                 //         tabBarIcon: ({ tintColor }) => <Ionicons name="ios-notifications" size={24} color={tintColor} />
                 //     }
@@ -86,7 +87,13 @@ const AppContainer = createStackNavigator(
 
 const AuthStack = createStackNavigator({
     Login: LoginScreen,
-    Register: RegisterScreen
+    Register: RegisterScreen,
+    
+});
+const ReviewStack = createStackNavigator({
+    Review: PostReview,
+    ShowReview:ReviewsScreen,
+    
 });
 
 export default createAppContainer(
@@ -94,7 +101,8 @@ export default createAppContainer(
         {
             Loading: LoadingScreen,
             App: AppContainer,
-            Auth: AuthStack
+            Auth: AuthStack,
+            Rev:ReviewStack
         },
         {
             initialRouteName: "Loading"

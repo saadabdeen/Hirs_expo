@@ -7,17 +7,40 @@ class Fire {
         firebase.initializeApp(firebaseConfig);
     }
 
-    addPost = async ({ text, localUri }) => {
+    addPost = async ({ itemName,rentPrice,rentBasis,description,contactNum, localUri }) => {
         const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}`);
 
         return new Promise((res, rej) => {
             this.firestore
                 .collection("posts")
                 .add({
-                    text,
+                    itemName,
+                    rentPrice,
+                    rentBasis,
+                    description,
+                    contactNum,
                     uid: this.uid,
                     timestamp: this.timestamp,
                     image: remoteUri
+                })
+                .then(ref => {
+                    res(ref);
+                })
+                .catch(error => {
+                    rej(error);
+                });
+        });
+    };
+
+    addReview = async ({ rating, reviewerName,comment, }) => {
+
+        return new Promise((res, rej) => {
+            this.firestore
+                .collection("reviews")
+                .add({
+                    rating,
+                    reviewerName,
+                    comment
                 })
                 .then(ref => {
                     res(ref);
@@ -62,7 +85,9 @@ class Fire {
 
             db.set({
                 name: user.name,
+                mobile:user.mobile,
                 email: user.email,
+                address:user.address,
                 avatar: null
             });
 

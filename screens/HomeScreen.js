@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, FlatList } from "react-native";
+import { View, Text, StyleSheet, Image, FlatList, Button,Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import firebase from "firebase";
 import moment from "moment";
@@ -45,12 +45,35 @@ import Fire from "../Fire";
 //     }
 // ];
 export default class HomeScreen extends React.Component {
-    state = { posts: [] }
+    state = { posts: [], user:{}}
     
     componentDidMount() {
-        this.getAddLists();        
+       // const user = this.props.uid || Fire.shared.uid;
+      //  this.myUsers(user);
+        this.getAddLists();
+       // this.myUsers();
+        //this.getUserList();        
          
     }
+    // getUserList() {
+    //     const user = this.props.uid || Fire.shared.uid;
+
+    //     this.unsubscribe = Fire.shared.firestore
+    //         .collection("users")
+    //         .doc(user)
+    //         .onSnapshot(doc => {
+    //             this.setState({ user: doc.data() });
+    //         });
+
+    // }
+    // myUsers(){
+    //     firebase.firestore().collection("users")
+    //         .doc(user)
+    //         .onSnapshot(doc => {
+    //             this.setState({ user: doc.data() });
+    //         });
+    // }
+
     getAddLists(){
         firebase.firestore().collection("posts")
         .get()
@@ -72,24 +95,37 @@ export default class HomeScreen extends React.Component {
     renderPost = post => {
         return (
             <View style={styles.feedItem}>
-                <Image source={{ uri: post.image }} style={styles.avatar} />
+                <Image source={{ uri: post.image}} style={styles.avatar} />
                 <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <View>
-                            <Text style={styles.name}>{post.text}</Text>
+                            <Text style={styles.name}>{post.itemName}</Text>
+                            {/* <Text style={styles.name}>{post.rentPrice}</Text>
+                            <Text style={styles.name}>{post.rentBasis}</Text>
+                            <Text style={styles.name}>{post.description}</Text> */}
                             {/* <Text style={styles.timestamp}>{moment(post.timestamp).fromNow()}</Text> */}
                         </View>
 
-                        <Ionicons name="ios-more" size={24} color="#73788B" />
+                        {/* <Ionicons name="ios-more" size={24} color="#73788B" /> */}
                     </View>
-                    <Text style={styles.post}>{post.text}</Text>
                     <Image source={{ uri: post.image }} style={styles.postImage} resizeMode="cover" />
-                    <View style={{ flexDirection: "row" }}>
-                        <Ionicons name="ios-heart-empty" size={24} color="#73788B" style={{ marginRight: 16 }} />
-                        <Ionicons name="ios-chatboxes" size={24} color="#73788B" />
+                    <Text style={styles.ItemName}>{post.itemName}</Text>
+                    <Text style={styles.post}>{post.description}</Text>
+                    <Text style={styles.detail}>PKR : <Text style={styles.detail}>{post.rentPrice}</Text>
+                    <Text style={styles.detail}> / {post.rentBasis}</Text>
+                    </Text>
+                    
+                    <View style={{ flexDirection: "row" , marginLeft: 170, marginTop: -25 }}>
+                        {/* <Ionicons name="ios-heart-empty" size={24} color="#73788B" style={{ marginRight: 16 }} />
+                        <Ionicons name="ios-chatboxes" size={24} color="#73788B" /> */}
+                        {/* <Button>Contact</Button> */}
+                        <Button  color="#ff6c70"  
+                        title="Contact" onPress={()=> Linking.openURL(`tel:${post.contactNum}`)}/> 
+                        
                     </View>
                 </View>
             </View>
+            
         );
     };
 
@@ -118,9 +154,9 @@ const styles = StyleSheet.create({
         backgroundColor: "#EBECF4"
     },
     header: {
-        paddingTop: 64,
+        paddingTop: 30,
         paddingBottom: 16,
-        backgroundColor: "#FFF",
+        backgroundColor: "#ff6c70",
         alignItems: "center",
         justifyContent: "center",
         borderBottomWidth: 1,
@@ -133,7 +169,8 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         fontSize: 20,
-        fontWeight: "500"
+        fontWeight: "500",
+        color: "#FFF",
     },
     feed: {
         marginHorizontal: 16
@@ -156,6 +193,10 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         color: "#454D65"
     },
+    ItemName: {
+        fontSize: 25,
+        color: "#E9446A",
+    },
     timestamp: {
         fontSize: 11,
         color: "#C4C6CE",
@@ -166,10 +207,17 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#838899"
     },
+    detail: {
+        marginTop: 15,
+        color: "#00009e",
+    },
     postImage: {
         width: undefined,
         height: 150,
         borderRadius: 5,
         marginVertical: 16
-    }
+    },
+    // button: {
+    //     marginHorizontal: 25,
+    // }
 });
